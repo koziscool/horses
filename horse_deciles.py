@@ -57,3 +57,10 @@ odds_post_agg_results['EXPECTED_EQUITY'] =  odds_and_post_groups.apply( weight_a
 # odds_post_agg_results =  odds_and_post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
 
 print odds_post_agg_results
+
+results_matrix = odds_post_agg_results.EXPECTED_EQUITY.as_matrix()
+print results_matrix
+print results_matrix.shape
+
+
+
