@@ -33,7 +33,7 @@ horses_df['DISTANCE'] = horses_df['RACE_TYPE'].str.split().str.get(0)
 horses_df['RACE_DATA'] = horses_df['RACE_TYPE'].str.split().str[1:]
 
 
-print horses_df.head()
+# print horses_df.head()
 
 aggregations = {
     'DOLLAR_RETURN' : {
@@ -56,11 +56,24 @@ odds_post_agg_results = odds_and_post_groups.agg( aggregations )
 odds_post_agg_results['EXPECTED_EQUITY'] =  odds_and_post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
 # odds_post_agg_results =  odds_and_post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
 
-print odds_post_agg_results
+odds_post_agg_results.reset_index(inplace=True)
 
-results_matrix = odds_post_agg_results.EXPECTED_EQUITY.as_matrix()
-print results_matrix
-print results_matrix.shape
+# print odds_post_agg_results
+
+  
+odds_post_agg_results_pivot = odds_post_agg_results.pivot(index='MINUTES_TILL_POST_DECILE',
+     columns='ODDS_DECILE', values='EXPECTED_EQUITY')
+
+print odds_post_agg_results_pivot
 
 
+# print odds_post_agg_results.index.levels[0]
+# print odds_post_agg_results.index.levels[1]
+
+# results_matrix = odds_post_agg_results.EXPECTED_EQUITY.as_matrix()
+# print results_matrix
+# print results_matrix.shape
+
+# plot heatmap
+# ax = sns.heatmap(results_matrix)
 
