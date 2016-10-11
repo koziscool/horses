@@ -44,12 +44,12 @@ aggregations = {
     }
 }
 
-post_groups = horses_df.groupby( 'MINUTES_TILL_POST_DECILE' )
-post_agg_results = post_groups.agg( aggregations )
-post_agg_results['EXPECTED_EQUITY'] =  post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
-# post_agg_results =  post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
-# print post_dframe.dtypes
-print post_agg_results
+# post_groups = horses_df.groupby( 'MINUTES_TILL_POST_DECILE' )
+# post_agg_results = post_groups.agg( aggregations )
+# post_agg_results['EXPECTED_EQUITY'] =  post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
+# # post_agg_results =  post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
+# # print post_dframe.dtypes
+# print post_agg_results
 
 odds_and_post_groups = horses_df.groupby( ['MINUTES_TILL_POST_DECILE', 'ODDS_DECILE']  )
 odds_post_agg_results = odds_and_post_groups.agg( aggregations )
@@ -57,10 +57,10 @@ odds_post_agg_results['EXPECTED_EQUITY'] =  odds_and_post_groups.apply( weight_a
 # odds_post_agg_results =  odds_and_post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
 
 odds_post_agg_results.reset_index(inplace=True)
+odds_post_agg_results.sort_index( by=['MINUTES_TILL_POST_DECILE', 'ODDS_DECILE'])
 
-# print odds_post_agg_results
+print odds_post_agg_results
 
-  
 odds_post_agg_results_pivot = odds_post_agg_results.pivot(index='MINUTES_TILL_POST_DECILE',
      columns='ODDS_DECILE', values='EXPECTED_EQUITY')
 
