@@ -1,9 +1,12 @@
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from  pandas import DataFrame
 import datetime
 import pandas.io.data 
+
+# import seaborn as sns
 
 def weight_ave( group, num_name, denom_name ):
     try:
@@ -28,7 +31,8 @@ horses_df['DOLLAR_RETURN'] = horses_df['HORSE_WON'] * horses_df['VOLUME_EXECUTED
 horses_df['DISTANCE'] = horses_df['RACE_TYPE'].str.split().str.get(0)
 horses_df['RACE_DATA'] = horses_df['RACE_TYPE'].str.split().str[1:]
 
-print horses_df.dtypes
+# print horses_df.dtypes
+print horses_df.head()
 
 
 aggregations = {
@@ -43,13 +47,57 @@ aggregations = {
 post_groups = horses_df.groupby( 'MINUTES_TILL_POST_DECILE' )
 post_agg_results = post_groups.agg( aggregations )
 post_agg_results['EXPECTED_EQUITY'] =  post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
+# post_agg_results =  post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
 # print post_dframe.dtypes
 print post_agg_results
 
-odds_and_post_groups = horses_df.groupby( ['MINUTES_TILL_POST_DECILE', 'ODDS_DECILE'] )
+odds_and_post_groups = horses_df.groupby( ['MINUTES_TILL_POST_DECILE', 'ODDS_DECILE']  )
 odds_post_agg_results = odds_and_post_groups.agg( aggregations )
 odds_post_agg_results['EXPECTED_EQUITY'] =  odds_and_post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
-print odds_post_agg_results
+odds_post_agg_results =  odds_and_post_groups.apply( weight_ave, 'DOLLAR_RETURN', 'VOLUME_EXECUTED' )
+
+# print odds_post_agg_results.head()
+# odds_post_agg_results.reset_index()
+
+
+print odds_post_agg_results.head()
+print odds_post_agg_results.index.nlevels
+print odds_post_agg_results.index.levels[0]
+print odds_post_agg_results.index.levels[1]
+
+# print odds_post_agg_results.index
+# print odds_post_agg_results.index.shape
+
+# print odds_post_agg_results[1:2]
+# odds_post_agg_results_resize = 
+
+print odds_post_agg_results.dtypes
+
+print '------'
+# results_matrix = odds_post_agg_results.EXPECTED_EQUITY.as_matrix()
+# print results_matrix
+
+# np.resize( results_matrix, (10, 10) )
+# print results_matrix.shape
+# print odds_post_agg_results.EXPECTED_EQUITY
+print '------'
+
+
+
+# plot heatmap
+# ax = sns.heatmap(results_matrix)
+
+# # turn the axis label
+# for item in ax.get_yticklabels():
+#     item.set_rotation(0)
+
+# for item in ax.get_xticklabels():
+#     item.set_rotation(90)
+
+# # save figure
+# plt.savefig('odds_post_heatmap.png', dpi=100)
+# plt.show()
+
 
 def add_tags( s, t_list):
     if isinstance( t_list, list ):
@@ -58,7 +106,7 @@ def add_tags( s, t_list):
     return s 
 
 all_tags = reduce( add_tags, horses_df['RACE_DATA'], set() )
-print len(all_tags), all_tags
+# print len(all_tags), all_tags
 
 # unique_race_tuples  = np.unique( horses_df[['COUNTRY', 'COURSE', 'RACE']] )
 # print unique_race_tuples
@@ -82,7 +130,7 @@ print horses_df['DISTANCE'].unique()
 
 print( horses_df[['MINUTES_TILL_POST','HORSE_WON']].corr())
 
-print horses_df[:20]
+# print horses_df[:20]
 # print horses_df.describe()
 
 # print pd.crosstab( horses_df.HORSE_WON, horses_df.MINUTES_TILL_POST_DECILE, margins=True )
