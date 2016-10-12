@@ -15,6 +15,10 @@ def weight_ave( group, num_name, denom_name ):
     except ZeroDivisionError:
         return NaN
 
+def jitter(a_series, noise_reduction=1000000):
+    return (np.random.random(len(a_series))*a_series.std()/noise_reduction)-(a_series.std()/(2*noise_reduction))
+
+
 
 pd.set_option( 'expand_frame_repr', False)
 
@@ -23,18 +27,18 @@ horses_df = pd.read_csv('March2015HR.csv',  parse_dates = ['RACE', 'LATEST_EXECU
 
 horses_df['MINUTES_TILL_POST'] = (horses_df['RACE'] - horses_df['LATEST_EXECUTED_AT_PRICE']) / np.timedelta64(60, 's')
 
-minutes_bins, minutes_edges = pd.qcut( horses_df.MINUTES_TILL_POST, 10, retbins=True )
-# print minutes_edges
+num_bins = 30
+
+minutes_bins, minutes_edges = pd.qcut( horses_df.MINUTES_TILL_POST + jitter(horses_df.MINUTES_TILL_POST),
+            num_bins, retbins=True )
 mintues_bins_min_float = pd.DataFrame( minutes_edges[0:][minutes_bins.labels] )
 horses_df['MINUTES_TILL_POST_DECILE'] = mintues_bins_min_float
 
-odds_bins, odds_edges = pd.qcut( horses_df.ODDS, 10, retbins=True )
+odds_bins, odds_edges = pd.qcut( horses_df.ODDS + jitter( horses_df.ODDS ), 
+          num_bins, retbins=True )
 odds_bins_min_float = pd.DataFrame( odds_edges[0:][odds_bins.labels] )
 horses_df['ODDS_DECILE'] = odds_bins_min_float
 
-# print deciles_min_float
-# print edges
-# print edges[4].dtype
 
 horses_df['DOLLAR_RETURN'] = horses_df['HORSE_WON'] * horses_df['VOLUME_EXECUTED'] * horses_df['ODDS'] 
 horses_df['DISTANCE'] = horses_df['RACE_TYPE'].str.split().str.get(0)
