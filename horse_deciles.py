@@ -21,19 +21,27 @@ pd.set_option( 'expand_frame_repr', False)
 # horses_df = pd.read_csv('HR_short.csv', parse_dates = ['RACE', 'LATEST_EXECUTED_AT_PRICE'])
 horses_df = pd.read_csv('March2015HR.csv',  parse_dates = ['RACE', 'LATEST_EXECUTED_AT_PRICE'])
 
-
-
 horses_df['MINUTES_TILL_POST'] = (horses_df['RACE'] - horses_df['LATEST_EXECUTED_AT_PRICE']) / np.timedelta64(60, 's')
-horses_df['MINUTES_TILL_POST_DECILE'] = pd.qcut( horses_df.MINUTES_TILL_POST, 10 )
 
-horses_df['ODDS_DECILE'] = pd.qcut( horses_df.ODDS, 10 )
+minutes_bins, minutes_edges = pd.qcut( horses_df.MINUTES_TILL_POST, 10, retbins=True )
+# print minutes_edges
+mintues_bins_min_float = pd.DataFrame( minutes_edges[0:][minutes_bins.labels] )
+horses_df['MINUTES_TILL_POST_DECILE'] = mintues_bins_min_float
+
+odds_bins, odds_edges = pd.qcut( horses_df.ODDS, 10, retbins=True )
+odds_bins_min_float = pd.DataFrame( odds_edges[0:][odds_bins.labels] )
+horses_df['ODDS_DECILE'] = odds_bins_min_float
+
+# print deciles_min_float
+# print edges
+# print edges[4].dtype
 
 horses_df['DOLLAR_RETURN'] = horses_df['HORSE_WON'] * horses_df['VOLUME_EXECUTED'] * horses_df['ODDS'] 
 horses_df['DISTANCE'] = horses_df['RACE_TYPE'].str.split().str.get(0)
 horses_df['RACE_DATA'] = horses_df['RACE_TYPE'].str.split().str[1:]
 
 
-# print horses_df.head()
+print horses_df.head()
 
 aggregations = {
     'DOLLAR_RETURN' : {
@@ -63,6 +71,10 @@ print odds_post_agg_results
 
 odds_post_agg_results_pivot = odds_post_agg_results.pivot(index='MINUTES_TILL_POST_DECILE',
      columns='ODDS_DECILE', values='EXPECTED_EQUITY')
+
+
+odds_post_agg_results_pivot.sort
+
 
 print odds_post_agg_results_pivot
 
